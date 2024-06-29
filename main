@@ -1,0 +1,34 @@
+#!/usr/bin/env perl
+
+# TODO: Better "memory management".
+#       Useful command line options.
+#       Decode.
+
+use strict;
+use warnings;
+
+require "./src/huffman.pl";
+
+sub main {
+    if (scalar @_ == 0) {
+	print "ERROR: Please provide an input string.\n";
+	$0 =~ s/.*\/(.*)$//;
+	my $script = $1;
+	print "Example: perl ./" . $script . " \"hello world\"\n";
+	exit 1;
+    }
+
+    # Convert input string to Huffman table/code
+    my $str = "";
+    for (@_) { $str .= $_ }
+
+    my @freq_list  = string_to_freq_tuples($str);
+    my @tree       = make_tree(@freq_list);
+    my %huff_table = huffman_code(@tree);
+
+    #print_tree @tree;
+    print_encoding_table(%huff_table);
+    print_encoded_input($str, %huff_table);
+}
+
+main @ARGV;
