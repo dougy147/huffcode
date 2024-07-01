@@ -1,4 +1,5 @@
-#!/usr/bin/env perl
+#Uncomment next line when using as conventional module
+#package Huffman;
 
 sub make_tuple {
     #      [ frequency , char ]
@@ -40,18 +41,18 @@ sub string_to_freq_tuples {
 }
 
 sub sort_freq_list {
-    # from least to most
-    my (@to_sort) = @_;
-    for my $i (0..scalar @to_sort - 1 - 1) {
-	for my $j ($i..scalar @to_sort - 1) {
-	    if ($to_sort[$j][0] <= $to_sort[$i][0]) {
-		my $swap = $to_sort[$j];
-		$to_sort[$j] = $to_sort[$i];
-		$to_sort[$i] = $swap;
+    # in ascending order
+    my ($array_ref) = shift;
+    my $l = scalar @{$array_ref}; # size of reference array
+    for my $i (0..$l - 1 - 1) {
+	for my $j ($i..$l - 1) {
+	    if ($array_ref->[$j][0] <= $array_ref->[$i][0]) {
+		my $swap = $array_ref->[$j];
+		$array_ref->[$j] = $array_ref->[$i];
+		$array_ref->[$i] = $swap;
 	    }
 	}
     }
-    return @to_sort;
 }
 
 sub print_tree {
@@ -77,23 +78,18 @@ sub print_tree {
 }
 
 sub make_tree {
-    my (@freq_list) = sort_freq_list @_;
-
+    my ($queue) = @_;
     my @tree;
-    my @queue;
-    for (@freq_list) {
-	push(@queue, $_);
-    }
 
     while (1) {
-	if (scalar @queue == 1) {
-    	    push(@tree, make_node $queue[0]);
+	if (scalar @{$queue} == 1) {
+    	    push(@tree, make_node $queue->[0]);
     	    last;
     	} else {
-    	    my $left  = shift @queue;
-    	    my $right = shift @queue;
-    	    push(@queue, make_node $left, $right);
-	    @queue = sort_freq_list @queue;
+    	    my $left  = shift @{$queue};
+    	    my $right = shift @{$queue};
+    	    push(@{$queue}, make_node $left, $right);
+	    sort_freq_list $queue;
     	}
     }
     return @tree;
@@ -139,10 +135,7 @@ sub print_encoding_table {
 
 sub print_encoded_input {
     my ($str, %huff_table) = @_;
-    # Print encoded input
-    for (split //, $str) {
-	print $huff_table{$_};
-    }
+    for (split //, $str) { print $huff_table{$_} }
     print "\n";
 }
 

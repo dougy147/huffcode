@@ -7,7 +7,7 @@
 use strict;
 use warnings;
 
-require "./src/huffman.pl";
+require "./src/Huffman.pm";
 
 sub main {
     if (scalar @_ == 0) {
@@ -23,10 +23,12 @@ sub main {
     for (@_) { $str .= $_ }
 
     my @freq_list  = string_to_freq_tuples($str);
-    my @tree       = make_tree(@freq_list);
+    sort_freq_list(\@freq_list);
+
+    my @tree       = make_tree(\@freq_list);
     my %huff_table = huffman_code(@tree);
 
-    #print_tree @tree;
+    #print_tree(@tree);
     print_encoding_table(%huff_table);
     print_encoded_input($str, %huff_table);
 }
